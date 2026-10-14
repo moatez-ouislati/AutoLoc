@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "paiement")
 @Getter
@@ -21,7 +22,7 @@ public class Paiement {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal montant;
     @Column(nullable = false)
-    private LocalDateTime datePaiement;
+    private LocalDate datePaiement;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private ModePaiement modePaiement;
