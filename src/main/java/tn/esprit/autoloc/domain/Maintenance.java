@@ -22,4 +22,9 @@ public class Maintenance {
     private LocalDate dateFin;
     @Column(length = 500)
     private String description;
+
+    //vehicule -> maintenance
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Vehicule vehicule;
+
 }
