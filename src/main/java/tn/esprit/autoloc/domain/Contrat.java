@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "contrat")
 @Getter
@@ -24,4 +27,7 @@ public class Contrat {
     private BigDecimal montantTotal;
     @Column(nullable = false)
     private boolean valide;
+
+    @OneToMany(mappedBy = "contrat", fetch = FetchType.LAZY)
+    private List<Paiement> paiements = new ArrayList<>();
 }
