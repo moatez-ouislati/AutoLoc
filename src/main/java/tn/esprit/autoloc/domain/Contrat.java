@@ -28,6 +28,7 @@ public class Contrat {
     @Column(nullable = false)
     private boolean valide;
 
-    @OneToMany(mappedBy = "contrat", fetch = FetchType.LAZY)
+    //@OneToMany(mappedBy = "contrat", fetch = FetchType.LAZY) -> Bidirectionnelle avec mappedBy
+    @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Paiement> paiements = new ArrayList<>();
 }
