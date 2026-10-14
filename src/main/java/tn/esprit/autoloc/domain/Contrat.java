@@ -34,4 +34,8 @@ public class Contrat {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Agence agence;
+
+    //Reservation > contrat
+    @OneToOne(fetch = FetchType.LAZY)
+    private Reservation reservation;
 }
