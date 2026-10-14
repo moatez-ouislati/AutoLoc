@@ -13,6 +13,7 @@ import java.util.List;
 
 @Configuration
 public class MockDataConfig {
+
     @Bean
     CommandLineRunner initVehicules(VehiculeRepository repository) {
         return args -> {
@@ -20,18 +21,33 @@ public class MockDataConfig {
                 return;
             }
             repository.saveAll(List.of(
-                    new Vehicule(null, "123 TUN 4567", "Renault", "Clio",
-                            CategorieVehicule.CITADINE, new BigDecimal("80.00"),
-                            StatutVehicule.DISPONIBLE),
-                    new Vehicule(null, "234 TUN 8910", "Peugeot", "508",
-                            CategorieVehicule.BERLINE, new BigDecimal("150.00"),
-                            StatutVehicule.DISPONIBLE),
-                    new Vehicule(null, "112 TUN 156", "BMW", "E30",
-                            CategorieVehicule.SUV, new BigDecimal("200.00"),
-                            StatutVehicule.MAINTENANCE)
-            ));
+                    Vehicule.builder()
+                            .immatriculation("123 TUN 4567")
+                            .marque("Renault")
+                            .modele("Clio")
+                            .categorie(CategorieVehicule.CITADINE)
+                            .tarifJournalier(new BigDecimal("80.00"))
+                            .statut(StatutVehicule.DISPONIBLE)
+                            .build(),
 
+                    Vehicule.builder()
+                            .immatriculation("234 TUN 8910")
+                            .marque("Peugeot")
+                            .modele("508")
+                            .categorie(CategorieVehicule.BERLINE)
+                            .tarifJournalier(new BigDecimal("150.00"))
+                            .statut(StatutVehicule.DISPONIBLE)
+                            .build(),
+
+                    Vehicule.builder()
+                            .immatriculation("112 TUN 156")
+                            .marque("BMW")
+                            .modele("E30")
+                            .categorie(CategorieVehicule.SUV)
+                            .tarifJournalier(new BigDecimal("200.00"))
+                            .statut(StatutVehicule.MAINTENANCE)
+                            .build()
+            ));
         };
     }
-
 }
