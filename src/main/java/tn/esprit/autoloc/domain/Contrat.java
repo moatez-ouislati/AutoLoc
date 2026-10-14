@@ -31,4 +31,7 @@ public class Contrat {
     //@OneToMany(mappedBy = "contrat", fetch = FetchType.LAZY) -> Bidirectionnelle avec mappedBy
     @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Paiement> paiements = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Agence agence;
 }
