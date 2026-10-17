@@ -37,7 +37,7 @@ API de gestion de **location de véhicules** développée avec **Spring Boot**, 
 | 3 | Couche Repository | Interfaces `I…Repository` (`JpaRepository<Entité, Long>`) | Voir note ci-dessous |
 | 4 | IoC, DI et couche Service | 9 services (`I…Service` / `…ServiceImpl`), exception métier, injection par constructeur | Terminé |
 | 5 | API REST (contrôleurs) | `web.controller`, tests Postman | À venir |
-| 6 | DTO | `web.dto` | À venir |
+| 6 | .. | `...` | À venir |
 
 > **Note** : les neuf repositories `I…Repository` sont requis par la couche Service (Atelier 4). Leur présence est confirmée au démarrage par le message `Found 9 JPA repository interfaces`.
 
@@ -81,35 +81,8 @@ La base `autoloc_db` est **créée automatiquement** au premier démarrage grâc
 
 Fichier `src/main/resources/application.properties` :
 
-```properties
-spring.application.name=autoloc-api
 
-# Connexion à la base de données
-spring.datasource.url=jdbc:mysql://localhost:3306/autoloc_db?createDatabaseIfNotExist=true
-spring.datasource.username=root
-spring.datasource.password=${DB_PASSWORD:}
-
-# Hibernate / JPA
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-
-# Logs
-logging.level.org.hibernate.SQL=DEBUG
-logging.level.tn.esprit.autoloc=INFO
-```
-
-### 4.3 Définir le mot de passe sans le versionner
-
-Le mot de passe n'est **jamais écrit en clair** dans le dépôt : il est lu dans la variable d'environnement `DB_PASSWORD`.
-
-| Environnement | Commande |
-|---|---|
-| Windows (PowerShell) | `$env:DB_PASSWORD="votre_mot_de_passe"` |
-| Linux / macOS | `export DB_PASSWORD=votre_mot_de_passe` |
-| IntelliJ | *Run → Edit Configurations → Environment variables* → `DB_PASSWORD=...` |
-
-### 4.4 Lancer l'application
+### 4.3 Lancer l'application
 
 ```bash
 ./mvnw spring-boot:run
@@ -117,7 +90,7 @@ Le mot de passe n'est **jamais écrit en clair** dans le dépôt : il est lu dan
 
 Sous Windows : `mvnw.cmd spring-boot:run`. Sous IntelliJ : clic droit sur `AutolocApiApplication.java` → **Run**.
 
-### 4.5 Vérifier le démarrage
+### 4.4 Vérifier le démarrage
 
 Dans la console, vérifier :
 
@@ -153,7 +126,7 @@ autoloc-api
 │   ├── exception/                 # ResourceNotFoundException (Atelier 4)
 │   └── web/
 │       ├── controller/            # Contrôleurs REST (Atelier 5)
-│       └── dto/                   # DTO (Atelier 6)
+│ 
 ├── src/main/resources/application.properties
 ├── src/test/java/tn/esprit/autoloc
 └── pom.xml
@@ -291,29 +264,6 @@ Tous les `@ManyToOne` et `@OneToOne` sont forcés en `LAZY` (le défaut JPA est 
 | Reservation ↔ Contrat | Contrat (`reservation`) | LAZY | `ALL` côté Reservation | Le contrat découle de la réservation. |
 | Vehicule → Maintenance | Maintenance (`vehicule`) | LAZY | `PERSIST` | Pas de `REMOVE` : l'historique d'entretien est conservé. |
 
-### Exemple : Contrat ↔ Paiement
-
-```java
-// Paiement : côté propriétaire (porte la clé étrangère)
-@ManyToOne(fetch = FetchType.LAZY)
-private Contrat contrat;
-
-// Contrat : côté inverse
-@OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL,
-           orphanRemoval = true, fetch = FetchType.LAZY)
-private List<Paiement> paiements = new ArrayList<>();
-
-public void addPaiement(Paiement paiement) {
-    paiements.add(paiement);
-    paiement.setContrat(this);
-}
-
-public void removePaiement(Paiement paiement) {
-    paiements.remove(paiement);
-    paiement.setContrat(null);
-}
-```
-
 - **`cascade = ALL`** : enregistrer ou supprimer un contrat propage l'opération à ses paiements.
 - **`orphanRemoval = true`** : retirer un paiement de la liste le supprime en base.
 - **Risque connu** : accéder à une collection `LAZY` hors transaction lève une `LazyInitializationException` (traitée par des requêtes dédiées dans un atelier ultérieur).
@@ -330,7 +280,6 @@ public void removePaiement(Paiement paiement) {
 | `maintenance` | véhicule |
 | `vehicule_equipement` | `id_vehicule`, `id_equipement` |
 
-Détail complet des choix : [`docs/fetch-strategy.md`](docs/fetch-strategy.md).
 
 ---
 
@@ -389,9 +338,6 @@ public class ResourceNotFoundException extends RuntimeException {
 | `IMaintenanceService` | CRUD |
 
 `IPaiementService` est en lecture seule : un paiement n'existe que rattaché à son contrat, donc sa création, sa modification et sa suppression passent par le `Contrat` (cascade et `orphanRemoval`).
-
-Détail : [`docs/service-notes.md`](docs/service-notes.md).
-
 ---
 
 ## 9. Règles de gestion
@@ -412,12 +358,6 @@ La validation déclarative (Bean Validation) viendra dans un atelier ultérieur.
 
 ---
 
-## 10. Documentation technique
-
-| Fichier | Contenu |
-|---|---|
-| [`docs/fetch-strategy.md`](docs/fetch-strategy.md) | Choix de `fetch`, `cascade` et `orphanRemoval` pour chaque association, avec justification. |
-| [`docs/service-notes.md`](docs/service-notes.md) | Modes d'injection comparés, tableau des services, erreurs du conteneur Spring, anomalies SonarQube, questions de compréhension. |
 
 ### Erreurs courantes du conteneur Spring
 
@@ -430,7 +370,7 @@ La validation déclarative (Bean Validation) viendra dans un atelier ultérieur.
 
 ---
 
-## 11. Conventions de code et de commit
+## 10. Conventions de code et de commit
 
 ### Code (Clean Code)
 
@@ -458,7 +398,7 @@ Le `.gitignore` doit exclure `target/` et `.idea/`. Ne jamais committer un mot d
 
 ---
 
-## 12. Dépannage
+## 11. Dépannage
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
@@ -474,7 +414,7 @@ Le `.gitignore` doit exclure `target/` et `.idea/`. Ne jamais committer un mot d
 
 ---
 
-## 13. Feuille de route
+## 12. Feuille de route
 
 - [x] Atelier 1 : projet Spring Boot, MySQL, 9 entités
 - [x] Atelier 2 : associations, cascade et fetch
@@ -486,6 +426,6 @@ Le `.gitignore` doit exclure `target/` et `.idea/`. Ne jamais committer un mot d
 
 ---
 
-## 14. Auteur
+## 13. Auteur
 
 - **Nom** : *Moataz Ouesleti*
