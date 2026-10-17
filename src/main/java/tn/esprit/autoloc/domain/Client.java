@@ -10,6 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@Entity
+@Table(name = "client")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
