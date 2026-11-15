@@ -2,15 +2,24 @@ package tn.esprit.autoloc.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.autoloc.domain.Maintenance;
+import tn.esprit.autoloc.domain.Vehicule;
 import tn.esprit.autoloc.exception.ResourceNotFoundException;
+import tn.esprit.autoloc.repository.EquipementRepository;
 import tn.esprit.autoloc.repository.MaintenanceRepository;
+import tn.esprit.autoloc.repository.VehiculeRepository;
+import tn.esprit.autoloc.web.dto.AffectationMaintenanceRequestDTO;
+import tn.esprit.autoloc.web.dto.MaintenanceResponseDTO;
 
 @Service
 @RequiredArgsConstructor
 
 public class MaintenanceServiceImpl implements IMaintenanceService {
     private final MaintenanceRepository MaintenanceRepository;
+
+    private final VehiculeRepository vehiculeRepository;
+
     @Override
     public Maintenance create(Maintenance Maintenance) {
         if (Maintenance.getIdMaintenance() != null) {
@@ -43,5 +52,16 @@ public class MaintenanceServiceImpl implements IMaintenanceService {
             throw new ResourceNotFoundException("Maintenance", id);
         }
         MaintenanceRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public MaintenanceResponseDTO affecterAVehicule(AffectationMaintenanceRequestDTO request) {
+        Maintenance maintenance = findById(request.idMaintenance());
+        Vehicule vehicule = vehiculeRepository.findById(request.idVehicule())
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicule", request.idVehicule()));
+
+        maintenance.setVehicule(vehicule);
+        return MaintenanceResponseDTO.from(MaintenanceRepository.save(maintenance));
     }
 }

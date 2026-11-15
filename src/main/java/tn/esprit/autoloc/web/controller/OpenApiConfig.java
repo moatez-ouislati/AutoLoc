@@ -1,4 +1,4 @@
-package tn.esprit.autoloc.web.controller;
+/* package tn.esprit.autoloc.web.controller;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -14,5 +14,9 @@ public class OpenApiConfig {
                 .title("AutoLoc API")
                 .description("API REST de gestion de location de véhicules")
                 .version("1.0.0"));
+
+
     }
 }
+
+ */

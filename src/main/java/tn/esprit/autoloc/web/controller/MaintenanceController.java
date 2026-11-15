@@ -6,11 +6,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Maintenance;
 import tn.esprit.autoloc.service.IMaintenanceService;
+import tn.esprit.autoloc.web.dto.AffectationMaintenanceRequestDTO;
+import tn.esprit.autoloc.web.dto.MaintenanceResponseDTO;
 
 @RestController
 @RequestMapping("/maintenances")
@@ -65,5 +69,17 @@ public class MaintenanceController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
         maintenanceService.deleteById(id);
+    }
+
+    //DTO
+    @Operation(summary = "Affecter une maintenance à un véhicule")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Maintenance affectée au véhicule"),
+            @ApiResponse(responseCode = "400", description = "Données invalides"),
+            @ApiResponse(responseCode = "404", description = "Maintenance ou véhicule introuvable")})
+    @PutMapping("/affecter-vehicule")
+    public MaintenanceResponseDTO affecterAVehicule(
+            @Valid @RequestBody AffectationMaintenanceRequestDTO request) {
+        return maintenanceService.affecterAVehicule(request);
     }
 }

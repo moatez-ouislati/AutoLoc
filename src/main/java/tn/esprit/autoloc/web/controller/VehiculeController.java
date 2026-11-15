@@ -6,11 +6,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Vehicule;
 import tn.esprit.autoloc.service.IVehiculeService;
+import tn.esprit.autoloc.web.dto.AffectationEquipementRequestDTO;
+import tn.esprit.autoloc.web.dto.VehiculeEquipementsResponseDTO;
 
 @RestController
 @RequestMapping("/vehicules")
@@ -65,5 +69,16 @@ public class VehiculeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
         vehiculeService.deleteById(id);
+    }
+
+    @Operation(summary = "Affecter un équipement à un véhicule")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Équipement affecté au véhicule"),
+            @ApiResponse(responseCode = "400", description = "Données invalides ou équipement déjà affecté"),
+            @ApiResponse(responseCode = "404", description = "Véhicule ou équipement introuvable")})
+    @PutMapping("/affecter-equipement")
+    public VehiculeEquipementsResponseDTO affecterEquipement(
+            @Valid @RequestBody AffectationEquipementRequestDTO request) {
+        return vehiculeService.affecterEquipement(request);
     }
 }
