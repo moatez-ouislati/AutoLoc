@@ -7,9 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.autoloc.domain.Equipement;
 import tn.esprit.autoloc.domain.Vehicule;
 import tn.esprit.autoloc.exception.ResourceNotFoundException;
+import tn.esprit.autoloc.repository.ContratRepository;
 import tn.esprit.autoloc.repository.EquipementRepository;
+import tn.esprit.autoloc.repository.MaintenanceRepository;
 import tn.esprit.autoloc.repository.VehiculeRepository;
 import tn.esprit.autoloc.web.dto.AffectationEquipementDTO;
+import tn.esprit.autoloc.web.dto.VehiculeDTO;
 import tn.esprit.autoloc.web.dto.VehiculeEquipementsDTO;
 import tn.esprit.autoloc.web.mapper.VehiculeMapper;
 
@@ -19,6 +22,8 @@ public class VehiculeServiceImpl implements IVehiculeService {
 
     private final VehiculeRepository vehiculeRepository;
     private final EquipementRepository equipementRepository;
+    private final ContratRepository contratRepository;
+    private final MaintenanceRepository maintenanceRepository;
     private final VehiculeMapper vehiculeMapper;
 
     @Override
@@ -71,5 +76,25 @@ public class VehiculeServiceImpl implements IVehiculeService {
         }
         // Pas de save() : l'entité est managée, Hibernate enregistre la modification au commit
         return vehiculeMapper.toEquipementsDTO(vehicule);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeDTO> findByContratId(Long idContrat) {
+        if (!contratRepository.existsById(idContrat)) {
+            throw new ResourceNotFoundException("Contrat", idContrat);
+        }
+        return vehiculeMapper.toDTOList(
+                vehiculeRepository.findDistinctByReservationsContratIdContrat(idContrat));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VehiculeDTO> findByMaintenanceId(Long idMaintenance) {
+        if (!maintenanceRepository.existsById(idMaintenance)) {
+            throw new ResourceNotFoundException("Maintenance", idMaintenance);
+        }
+        return vehiculeMapper.toDTOList(
+                vehiculeRepository.findDistinctByMaintenancesIdMaintenance(idMaintenance));
     }
 }

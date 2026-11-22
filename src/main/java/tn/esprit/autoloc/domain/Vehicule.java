@@ -2,7 +2,7 @@ package tn.esprit.autoloc.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,8 +46,18 @@ public class Vehicule {
     @JoinTable(name = "vehicule_equipement",
             joinColumns = @JoinColumn(name = "id_vehicule"),
             inverseJoinColumns = @JoinColumn(name = "id_equipement"))
+    @Builder.Default
     private Set<Equipement> equipements = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Maintenance> maintenances = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "vehicule", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Reservation> reservations = new ArrayList<>();
+
+
 }

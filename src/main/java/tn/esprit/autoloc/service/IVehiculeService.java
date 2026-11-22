@@ -2,6 +2,7 @@ package tn.esprit.autoloc.service;
 
 import tn.esprit.autoloc.domain.Vehicule;
 import tn.esprit.autoloc.web.dto.AffectationEquipementDTO;
+import tn.esprit.autoloc.web.dto.VehiculeDTO;
 import tn.esprit.autoloc.web.dto.VehiculeEquipementsDTO;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface IVehiculeService {
     Vehicule update(Long id, Vehicule Vehicule);
     void deleteById(Long id);
     VehiculeEquipementsDTO affecterEquipement(AffectationEquipementDTO dto);
+    List<VehiculeDTO> findByContratId(Long idContrat);
+    List<VehiculeDTO> findByMaintenanceId(Long idMaintenance);
 }

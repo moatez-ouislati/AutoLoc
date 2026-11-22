@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -101,6 +102,21 @@ public class MaintenanceController {
     })
     public MaintenanceDTO affecterAVehicule(@Valid @RequestBody AffectationMaintenanceDTO dto) {
         return maintenanceService.affecterAVehicule(dto);
+    }
+
+    @GetMapping("/by-vehicule/{idVehicule}")
+    @Operation(summary = "Lister les maintenances d'un véhicule")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Liste des maintenances (vide si aucune)"),
+            @ApiResponse(responseCode = "400", description = "Identifiant invalide",
+                    content = @Content(schema = @Schema(implementation = ErreurDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Véhicule introuvable",
+                    content = @Content(schema = @Schema(implementation = ErreurDTO.class)))})
+    public List<MaintenanceDTO> findByVehicule(
+            @Parameter(description = "Identifiant du véhicule", example = "1")
+            @PathVariable @Positive(message = "L'identifiant du véhicule doit être strictement positif")
+            Long idVehicule) {
+        return maintenanceService.findByVehiculeId(idVehicule);
     }
 
 }

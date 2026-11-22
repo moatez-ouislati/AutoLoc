@@ -12,6 +12,7 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import tn.esprit.autoloc.web.dto.VehiculeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
@@ -75,6 +76,36 @@ public class VehiculeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
         vehiculeService.deleteById(id);
+    }
+
+    @GetMapping("/by-contrat/{idContrat}")
+    @Operation(summary = "Lister les véhicules d'un contrat")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Liste des véhicules (vide si aucun)"),
+            @ApiResponse(responseCode = "400", description = "Identifiant invalide",
+                    content = @Content(schema = @Schema(implementation = ErreurDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Contrat introuvable",
+                    content = @Content(schema = @Schema(implementation = ErreurDTO.class)))})
+    public List<VehiculeDTO> findByContrat(
+            @Parameter(description = "Identifiant du contrat", example = "1")
+            @PathVariable @Positive(message = "L'identifiant du contrat doit être strictement positif")
+            Long idContrat) {
+        return vehiculeService.findByContratId(idContrat);
+    }
+
+    @GetMapping("/by-maintenance/{idMaintenance}")
+    @Operation(summary = "Lister les véhicules d'une maintenance")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Liste des véhicules (vide si aucun)"),
+            @ApiResponse(responseCode = "400", description = "Identifiant invalide",
+                    content = @Content(schema = @Schema(implementation = ErreurDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Maintenance introuvable",
+                    content = @Content(schema = @Schema(implementation = ErreurDTO.class)))})
+    public List<VehiculeDTO> findByMaintenance(
+            @Parameter(description = "Identifiant de la maintenance", example = "1")
+            @PathVariable @Positive(message = "L'identifiant de la maintenance doit être strictement positif")
+            Long idMaintenance) {
+        return vehiculeService.findByMaintenanceId(idMaintenance);
     }
 
     @PutMapping("/affecter-equipement")

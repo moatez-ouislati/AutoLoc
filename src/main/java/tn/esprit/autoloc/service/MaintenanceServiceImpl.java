@@ -66,7 +66,16 @@ public class MaintenanceServiceImpl implements IMaintenanceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicule", dto.idVehicule()));
 
         maintenance.setVehicule(vehicule);
-        // Pas de save() : dirty checking au commit. Le mapping se fait dans la transaction.
         return maintenanceMapper.toDTO(maintenance);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MaintenanceDTO> findByVehiculeId(Long idVehicule) {
+        if (!vehiculeRepository.existsById(idVehicule)) {
+            throw new ResourceNotFoundException("Vehicule", idVehicule);
+        }
+        return maintenanceMapper.toDTOList(
+                maintenanceRepository.findByVehiculeIdVehiculeOrderByDateDebutDesc(idVehicule));
     }
 }
