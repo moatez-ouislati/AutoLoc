@@ -24,5 +24,4 @@ public class AgenceController {
     @ResponseStatus(HttpStatus.CREATED)
     public Agence create(@RequestBody Agence agence) { return
             agenceService.create(agence); }
-
 }

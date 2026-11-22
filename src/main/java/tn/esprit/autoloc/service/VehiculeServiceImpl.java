@@ -1,4 +1,5 @@
 package tn.esprit.autoloc.service;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,61 +9,67 @@ import tn.esprit.autoloc.domain.Vehicule;
 import tn.esprit.autoloc.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.repository.EquipementRepository;
 import tn.esprit.autoloc.repository.VehiculeRepository;
-import tn.esprit.autoloc.web.dto.AffectationEquipementRequestDTO;
-import tn.esprit.autoloc.web.dto.VehiculeEquipementsResponseDTO;
+import tn.esprit.autoloc.web.dto.AffectationEquipementDTO;
+import tn.esprit.autoloc.web.dto.VehiculeEquipementsDTO;
+import tn.esprit.autoloc.web.mapper.VehiculeMapper;
 
 @Service
 @RequiredArgsConstructor
-
 public class VehiculeServiceImpl implements IVehiculeService {
-    private final VehiculeRepository VehiculeRepository;
+
+    private final VehiculeRepository vehiculeRepository;
     private final EquipementRepository equipementRepository;
+    private final VehiculeMapper vehiculeMapper;
+
     @Override
-    public Vehicule create(Vehicule Vehicule) {
-        if (Vehicule.getIdVehicule() != null) {
+    public Vehicule create(Vehicule vehicule) {
+        if (vehicule.getIdVehicule() != null) {
             throw new IllegalArgumentException(
                     "Un nouveau Vehicule ne doit pas avoir d'identifiant");
         }
-        return VehiculeRepository.save(Vehicule);
+        return vehiculeRepository.save(vehicule);
     }
+
     @Override
     public Vehicule findById(Long id) {
-        return VehiculeRepository.findById(id)
+        return vehiculeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicule", id));
     }
+
     @Override
     public List<Vehicule> findAll() {
-
-        return VehiculeRepository.findAll();
+        return vehiculeRepository.findAll();
     }
+
     @Override
-    public Vehicule update(Long id, Vehicule Vehicule) {
-        if(Vehicule.getTarifJournalier().intValueExact() < 0)
-        {
+    public Vehicule update(Long id, Vehicule vehicule) {
+        if (vehicule.getTarifJournalier().intValueExact() < 0) {
             throw new IllegalArgumentException("Tarif doit etre psotive ..");
         }
         Vehicule existant = findById(id);
-        return VehiculeRepository.save(existant);
+        return vehiculeRepository.save(existant);
     }
+
     @Override
     public void deleteById(Long id) {
-        if (!VehiculeRepository.existsById(id)) {
+        if (!vehiculeRepository.existsById(id)) {
             throw new ResourceNotFoundException("Vehicule", id);
         }
-        VehiculeRepository.deleteById(id);
+        vehiculeRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public VehiculeEquipementsResponseDTO affecterEquipement(AffectationEquipementRequestDTO request) {
-        Vehicule vehicule = findById(request.idVehicule());
-        Equipement equipement = equipementRepository.findById(request.idEquipement())
-                .orElseThrow(() -> new ResourceNotFoundException("Equipement", request.idEquipement()));
+    public VehiculeEquipementsDTO affecterEquipement(AffectationEquipementDTO dto) {
+        Vehicule vehicule = findById(dto.idVehicule());
+        Equipement equipement = equipementRepository.findById(dto.idEquipement())
+                .orElseThrow(() -> new ResourceNotFoundException("Equipement", dto.idEquipement()));
 
-        if (vehicule.getEquipements().contains(equipement)) {
-            throw new IllegalArgumentException("Cet équipement est déjà affecté à ce véhicule");
+        // Set.add() renvoie false si l'équipement est déjà présent
+        if (!vehicule.getEquipements().add(equipement)) {
+            throw new IllegalStateException("Cet équipement est déjà affecté à ce véhicule");
         }
-        vehicule.getEquipements().add(equipement);
-        return VehiculeEquipementsResponseDTO.from(VehiculeRepository.save(vehicule));
+        // Pas de save() : l'entité est managée, Hibernate enregistre la modification au commit
+        return vehiculeMapper.toEquipementsDTO(vehicule);
     }
 }
