@@ -1,11 +1,14 @@
-# AutoLoc API
+# AutoLoc 
 
-API REST de gestion de **location de véhicules** (agences, véhicules, clients, réservations, contrats, maintenances), développée avec **Spring Boot** et **MySQL** dans le cadre du module *UP ASI* (ESPRIT, ASI 26-27).
+Gestion de **location de véhicules** (agences, véhicules, clients, réservations, contrats, maintenances), développée avec **Spring Boot** et **MySQL** dans le cadre du module *UP ASI* (ESPRIT, 26-27).
 
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-brightgreen)
 ![Maven](https://img.shields.io/badge/Build-Maven-blue)
 ![MySQL](https://img.shields.io/badge/Database-MySQL-informational)
+
+<img width="1920" height="1080" alt="stylish-elegant-woman-car-salon" src="https://github.com/user-attachments/assets/06cc7d3e-321b-43d5-accb-8692ce52a784" />
+
 
 ## Fonctionnalités
 
